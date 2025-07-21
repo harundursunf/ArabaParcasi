@@ -1,0 +1,27 @@
+@import "tailwindcss";
+/* src/index.css dosyasının en altına ekle */
+
+@keyframes kenburns-t-l {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.15) translate(-5%, -5%);
+  }
+}
+
+.ken-burns-bg {
+  animation: kenburns-t-l 20s ease-out both;
+}
+
+/* Slider'ın navigasyon noktalarını daha şık yapalım */
+.slick-dots li button:before {
+  font-size: 10px;
+  color: white !important;
+  opacity: 0.5;
+}
+
+.slick-dots li.slick-active button:before {
+  opacity: 1;
+  color: #f59e0b !important; /* Tailwind'in amber-400 rengi */
+}
