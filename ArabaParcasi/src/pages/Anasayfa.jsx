@@ -85,24 +85,24 @@ function Anasayfa() {
 
     return (
         <div className="bg-gray-50">
-            {/* 1. HERO SLIDER */}
-            <section className="relative h-[50vh] md:h-[65vh] min-h-[400px] w-full overflow-hidden">
-                <Slider {...mainSliderSettings}>
-                    {sliderData.map(slide => (
-                         <div key={slide.title} className="relative h-[50vh] md:h-[65vh] min-h-[400px]">
-                            <div className="absolute inset-0 bg-cover bg-center ken-burns-bg" style={{ backgroundImage: `url('${slide.image}')` }}></div>
-                            <div className="absolute inset-0 bg-opacity-50"></div>
-                            <div className="relative h-full flex flex-col justify-center items-center text-center text-white p-4 z-10">
-                                <motion.h1 initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.2}} className="text-3xl md:text-6xl rounded-3xl bg-red-800 font-black uppercase tracking-wider">{slide.title}</motion.h1>
-                                <motion.p initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.4}} className="mt-4 max-w-2xl text-base md:text-lg  text-gray-200">{slide.subtitle}</motion.p>
-                                <motion.div initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.6}}>
-                                    <Link to={slide.buttonLink} className="mt-8 inline-block bg-yellow-400 text-gray-900 font-bold py-3 px-10 rounded-full text-lg uppercase transition-transform transform hover:scale-105 hover:shadow-lg">{slide.buttonText}</Link>
-                                </motion.div>
-                            </div>
-                        </div>
-                    ))}
-                </Slider>
-            </section>
+     {/* 10. SEÇENEK: BÜYÜK TİPOGRAFİ */}
+<section className="relative h-[50vh] md:h-[65vh] min-h-[400px] w-full overflow-hidden">
+    <Slider {...mainSliderSettings}>
+        {sliderData.map(slide => (
+            <div key={slide.title} className="relative h-[50vh] md:h-[65vh] min-h-[400px]">
+                <div className="absolute inset-0 bg-cover bg-center ken-burns-bg" style={{ backgroundImage: `url('${slide.image}')` }}></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                <div className="relative h-full w-full flex flex-col justify-center items-center text-center text-white p-4 z-10">
+                    <motion.h1 initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.2}} className="text-5xl md:text-8xl font-black uppercase tracking-tighter" style={{textShadow: '3px 3px 10px rgba(0,0,0,0.5)'}}>{slide.title}</motion.h1>
+                    <motion.p initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.4}} className="mt-4 max-w-2xl text-lg md:text-xl text-gray-200 font-light">{slide.subtitle}</motion.p>
+                    <motion.div initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.6}} className="mt-8">
+                        <Link to={slide.buttonLink} className="inline-block bg-yellow-400 text-gray-900 font-bold py-3 px-10 rounded-full text-lg uppercase transition-all duration-300 transform hover:scale-105 hover:shadow-xl">{slide.buttonText}</Link>
+                    </motion.div>
+                </div>
+            </div>
+        ))}
+    </Slider>
+</section>
             
             {/* 2. HIZLI ERİŞİM MENÜSÜ */}
             <AnimatedSection>

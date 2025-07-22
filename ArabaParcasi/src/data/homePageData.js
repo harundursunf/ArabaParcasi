@@ -5,24 +5,26 @@ export const sliderData = [
         subtitle: 'Endüstriyel lazer makineniz için en kaliteli parçalarla üretiminizi bir üst seviyeye taşıyın.',
         buttonText: 'Şimdi Keşfet',
         buttonLink: '/urunler',
-        image: '/silder1.png' // <-- DEĞİŞTİRİLDİ
+        // Bu başlık için en uygun görsel, lazerin çalıştığı anı gösteren aksiyon fotoğrafıdır.
+        image: '/slider1.png'
     },
     {
         title: 'TÜM YEDEK PARÇALAR TEK ADRESTE',
         subtitle: 'Geniş stok ağımız ile aradığınız tüm nozzle, lens ve seramik çeşitleri anında kargoda.',
         buttonText: 'Ürünleri İncele',
         buttonLink: '/urunler',
-        image: '/slider6.png' // <-- DEĞİŞTİRİLDİ
+        // Bu başlık için en uygun görsel, tüm parçaların sergilendiği geniş envanter fotoğrafıdır.
+        image: '/slider6.png'
     },
     {
         title: '7/24 TEKNİK DESTEK',
         subtitle: 'Sadece parça satmıyoruz, aynı zamanda tecrübemizle her an yanınızdayız.',
         buttonText: 'Bize Ulaşın',
         buttonLink: '/iletisim',
-        image: '/slider3.png' // <-- DEĞİŞTİRİLDİ
+        // Bu başlık için en uygun görsel, teknisyenin makineyle ilgilendiği destek fotoğrafıdır.
+        image: '/slider3.png'
     }
 ];
-
 
 // Hızlı Erişim Menüsü için veriler (Trendyol'daki gibi yuvarlak ikonlar)
 export const hizliErisim = [
@@ -40,15 +42,15 @@ export const hizliErisim = [
 
 // PROMOSYON BANNERLARI İÇİN YENİ VERİ YAPISI
 export const promoBannerlar = [
-    { 
-        resim: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=2070', 
+    {
+        resim: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=2070',
         link: '#',
         kategori: 'Tüm Nozzle Çeşitleri',
         baslik: '%30\'a Varan Sezon İndirimleri',
         buttonText: 'Fırsatları Keşfet'
     },
-    { 
-        resim: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=2070', 
+    {
+        resim: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=2070',
         link: '#',
         kategori: 'Kesim Kafaları',
         baslik: 'Yeni Nesil Raytools® Serisi Stoklarda',
