@@ -34,11 +34,29 @@ export const hizliErisim = [
     { ad: 'Teklif Al', icon: '💬', link: '/iletisim' },
 ];
 
-// Promosyon banner'ları için veriler
+// src/data/homePageData.js
+
+// ... other data arrays ...
+
+// PROMOSYON BANNERLARI İÇİN YENİ VERİ YAPISI
 export const promoBannerlar = [
-    { resim: '/x1.png', link: '#' },
-    { resim: '/x1.png', link: '#' },
+    { 
+        resim: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=2070', 
+        link: '#',
+        kategori: 'Tüm Nozzle Çeşitleri',
+        baslik: '%30\'a Varan Sezon İndirimleri',
+        buttonText: 'Fırsatları Keşfet'
+    },
+    { 
+        resim: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=2070', 
+        link: '#',
+        kategori: 'Kesim Kafaları',
+        baslik: 'Yeni Nesil Raytools® Serisi Stoklarda',
+        buttonText: 'Hemen İncele'
+    },
 ];
+
+// ... other data arrays ...
 
 
 // Farklı karuseller için ürün listeleri (rating ve reviews kaldırıldı, resim güncellendi)

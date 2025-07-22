@@ -1,97 +1,298 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { kategoriler, tumUrunler } from '../data/urunData';
+import { markalar } from '../data/homePageData';
 import ProductCard from '../components/ProductCard';
 
-// İkonlar
-const SearchIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>;
-const ChevronDownIcon = () => <svg className="w-5 h-5 ml-2 -mr-1 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>;
+// --- İKONLAR (Değişiklik yok) ---
+const GridIcon = ({ ...props }) => <svg {...props} viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6v6H4V4zm8 0h6v6h-6V4zM4 14h6v6H4v-6zm8 14h6v-6h-6v6z"></path></svg>;
+const ListIcon = ({ ...props }) => <svg {...props} viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"></path></svg>;
+const ChevronRightIcon = () => <svg className="w-4 h-4 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>;
+const SearchIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>;
+const ChevronDownIcon = ({ ...props }) => <svg {...props} fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>;
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
+const FilterIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L12 14.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 016 17v-2.586L3.293 6.707A1 1 0 013 6V4z"></path></svg>;
 const CartIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>;
+const ArrowUpIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>;
+const RefreshIcon = () => <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 15"></path></svg>
 
-const ProductModal = ({ product, onClose }) => {
-    const { addToCart } = useCart();
+// --- YARDIMCI BİLEŞENLER (Değişiklik yok)---
+const ProductModal = ({ product, onClose }) => { const { addToCart } = useCart(); return (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black bg-opacity-60 z-[70] flex items-center justify-center p-4" onClick={onClose}><motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} transition={{ duration: 0.3 }} className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative" onClick={(e) => e.stopPropagation()}><button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 z-10"><CloseIcon /></button><div className="md:col-span-1"><img src={product.resim} alt={product.ad} className="w-full h-full object-cover md:rounded-l-xl" /></div><div className="md:col-span-1 p-8 flex flex-col"><p className="text-sm font-semibold text-yellow-500">{product.kategori}</p><h2 className="text-3xl font-bold text-gray-900 mt-2">{product.ad}</h2><p className="mt-4 text-gray-600">Bu alana ürünle ilgili detaylı bir açıklama gelecek. Yüksek kaliteli materyaller ve üstün mühendislik ile üretilmiştir...</p><div className="mt-auto pt-6"><p className="text-3xl font-black text-gray-800">{product.fiyat} TL</p><button disabled={!product.stok} onClick={() => addToCart(product)} className="w-full mt-4 flex items-center justify-center bg-gray-800 text-white font-bold py-3 rounded-lg transition-colors duration-300 hover:bg-yellow-400 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"><CartIcon /> <span className="ml-2">Sepete Ekle</span></button></div></div></motion.div></motion.div>); };
+const Breadcrumb = ({ kategori }) => (<nav className="flex items-center text-sm text-gray-500"><Link to="/" className="hover:text-gray-700">Anasayfa</Link><ChevronRightIcon /><span className="font-semibold text-gray-700">{kategori}</span></nav>);
+const AccordionFilter = ({ title, children }) => { const [isOpen, setIsOpen] = useState(true); return (<div className="border-b"><button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center py-4 text-left"><span className="font-bold text-gray-800">{title}</span><ChevronDownIcon className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} /></button><AnimatePresence>{isOpen && (<motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><div className="pb-4">{children}</div></motion.div>)}</AnimatePresence></div>); };
+const SkeletonCard = () => (<div className="bg-white rounded-xl shadow-md p-4 animate-pulse"><div className="bg-gray-200 h-48 rounded-md"></div><div className="mt-4 h-4 bg-gray-200 rounded w-1/3"></div><div className="mt-2 h-6 bg-gray-200 rounded w-3/4"></div><div className="mt-4 h-8 bg-gray-200 rounded w-1/2"></div></div>);
+
+// --- YENİ & GELİŞTİRİLMİŞ BİLEŞENLER ---
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+    }
+    if (totalPages <= 1) return null;
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} transition={{ duration: 0.3 }} className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative" onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 z-10"><CloseIcon/></button>
-                <div className="md:col-span-1"><img src={product.resim} alt={product.ad} className="w-full h-full object-cover rounded-l-xl"/></div>
-                <div className="md:col-span-1 p-8 flex flex-col">
-                    <p className="text-sm font-semibold text-yellow-500">{product.kategori}</p>
-                    <h2 className="text-3xl font-bold text-gray-900 mt-2">{product.ad}</h2>
-                    <p className="mt-4 text-gray-600">Bu alana ürünle ilgili detaylı bir açıklama gelecek. Yüksek kaliteli materyaller ve üstün mühendislik ile üretilmiştir...</p>
-                    <div className="mt-auto pt-6">
-                        <p className="text-3xl font-black text-gray-800">{product.fiyat}</p>
-                        <button disabled={!product.stok} onClick={() => addToCart(product)} className="w-full mt-4 flex items-center justify-center bg-gray-800 text-white font-bold py-3 rounded-lg transition-colors duration-300 hover:bg-yellow-400 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"><CartIcon /> <span className="ml-2">Sepete Ekle</span></button>
-                    </div>
-                </div>
-            </motion.div>
-        </motion.div>
+        <div className="flex items-center justify-center space-x-1 mt-12">
+            <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} className="px-3 py-2 text-gray-500 bg-white rounded-md hover:bg-yellow-400 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
+                Önceki
+            </button>
+            {pageNumbers.map(number => (
+                <button key={number} onClick={() => onPageChange(number)} className={`px-4 py-2 rounded-md font-bold ${currentPage === number ? 'bg-yellow-400 text-gray-900' : 'text-gray-600 bg-white hover:bg-yellow-100'}`}>
+                    {number}
+                </button>
+            ))}
+            <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages} className="px-3 py-2 text-gray-500 bg-white rounded-md hover:bg-yellow-400 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
+                Sonraki
+            </button>
+        </div>
     );
 };
 
-const Pagination = () => ( <div className="flex items-center justify-center space-x-2 mt-12"><button className="px-4 py-2 text-gray-500 bg-white rounded-md hover:bg-yellow-400 hover:text-gray-900">Önceki</button><button className="px-4 py-2 text-gray-900 bg-yellow-400 rounded-md font-bold">1</button><button className="px-4 py-2 text-gray-500 bg-white rounded-md hover:bg-yellow-400 hover:text-gray-900">2</button><button className="px-4 py-2 text-gray-500 bg-white rounded-md hover:bg-yellow-400 hover:text-gray-900">3</button><button className="px-4 py-2 text-gray-500 bg-white rounded-md hover:bg-yellow-400 hover:text-gray-900">Sonraki</button></div>);
+const FiltrePaneli = ({ filters, onFilterChange, onReset, onKategoriChange }) => (
+    <div className="bg-white divide-y rounded-lg border">
+        <AccordionFilter title="Kategoriler">
+            <ul className="space-y-1 p-2">
+                {kategoriler.map(kategori => (
+                    <li key={kategori}>
+                        <button onClick={() => onKategoriChange(kategori)} className={`w-full text-left p-2 rounded-md text-sm ${filters.seciliKategori === kategori ? 'bg-yellow-100 text-yellow-800 font-semibold' : 'text-gray-600 hover:bg-gray-100'}`}>
+                            {kategori}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </AccordionFilter>
+        <AccordionFilter title="Marka">
+            <div className="space-y-2 p-4">
+                {markalar.map(marka => (
+                    <div key={marka} className="flex items-center">
+                        <input id={`marka-${marka}`} type="checkbox" checked={filters.seciliMarkalar.includes(marka)} onChange={() => onFilterChange('marka', marka)} className="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-400" />
+                        <label htmlFor={`marka-${marka}`} className="ml-3 text-sm text-gray-600">{marka}</label>
+                    </div>
+                ))}
+            </div>
+        </AccordionFilter>
+        <div className="p-4">
+            <button onClick={onReset} className="w-full flex items-center justify-center text-sm font-semibold text-gray-600 hover:text-red-500">
+                <RefreshIcon /> Filtreleri Temizle
+            </button>
+        </div>
+    </div>
+);
+
 
 function Urunler() {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const urlQuery = searchParams.get('q') || '';
+    const urlKategori = searchParams.get('kategori') || 'Tüm Kategoriler';
 
-    const [seciliKategori, setSeciliKategori] = useState('Tüm Kategoriler');
-    const [aramaTerimi, setAramaTerimi] = useState(urlQuery);
-    const [stoktakiler, setStoktakiler] = useState(false);
+    // --- STATE'LER ---
+    const initialFilters = {
+        aramaTerimi: urlQuery,
+        seciliKategori: urlKategori,
+        seciliMarkalar: [],
+    };
+
+    const [filters, setFilters] = useState(initialFilters);
+    const [tempFilters, setTempFilters] = useState(filters); // Mobil için geçici filtreler
+    const [isLoading, setIsLoading] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 12;
+
+    // --- EFFECT'LER ---
+    useEffect(() => {
+        setFilters(prev => ({ ...prev, aramaTerimi: urlQuery, seciliKategori: urlKategori }));
+    }, [urlQuery, urlKategori]);
 
     useEffect(() => {
-        setAramaTerimi(urlQuery);
-    }, [urlQuery]);
+        const checkScrollTop = () => {
+            setShowScrollTop(window.pageYOffset > 400);
+        };
+        window.addEventListener('scroll', checkScrollTop);
+        return () => window.removeEventListener('scroll', checkScrollTop);
+    }, []);
 
     const filtrelenmisUrunler = useMemo(() => {
-        return tumUrunler
-            .filter(urun => (seciliKategori === 'Tüm Kategoriler' || urun.kategori === seciliKategori))
-            .filter(urun => urun.ad.toLowerCase().includes(aramaTerimi.toLowerCase()))
-            .filter(urun => stoktakiler ? urun.stok === true : true);
-    }, [seciliKategori, aramaTerimi, stoktakiler]);
+        let urunler = tumUrunler
+            .filter(urun => filters.seciliKategori === 'Tüm Kategoriler' || urun.kategori === filters.seciliKategori)
+            .filter(urun => urun.ad.toLowerCase().includes(filters.aramaTerimi.toLowerCase()))
+            .filter(urun => filters.seciliMarkalar.length === 0 || filters.seciliMarkalar.includes(urun.marka));
+        
+        return urunler;
+    }, [filters]);
 
+    const totalPages = Math.ceil(filtrelenmisUrunler.length / ITEMS_PER_PAGE);
+    const currentUrunler = filtrelenmisUrunler.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    useEffect(() => {
+        setIsLoading(true);
+        const timer = setTimeout(() => setIsLoading(false), 500);
+        return () => clearTimeout(timer);
+    }, [filters, currentPage]); // Filtre veya sayfa değiştiğinde loading göster
+
+    // --- FONKSİYONLAR ---
+    const resetAllFilters = () => {
+        setFilters(initialFilters);
+        setTempFilters(initialFilters);
+        navigate('/urunler');
+        setCurrentPage(1);
+    };
+
+    const handleKategoriChange = (kategori) => {
+        const newFilters = { ...initialFilters, aramaTerimi: filters.aramaTerimi, seciliKategori: kategori };
+        setFilters(newFilters);
+        setTempFilters(newFilters); // Temp'i de güncelle
+        navigate(`/urunler?kategori=${kategori}`);
+        setCurrentPage(1);
+        setIsFilterOpen(false); // Mobil'de menüyü kapat
+    };
+
+    const handleFilterChange = (type, value) => {
+        setTempFilters(prev => {
+            if (type === 'marka') {
+                const markalar = prev.seciliMarkalar.includes(value)
+                    ? prev.seciliMarkalar.filter(m => m !== value)
+                    : [...prev.seciliMarkalar, value];
+                return { ...prev, seciliMarkalar: markalar };
+            }
+            return prev;
+        });
+    };
+    
+    const applyTempFilters = () => {
+        setFilters(tempFilters);
+        setCurrentPage(1);
+        setIsFilterOpen(false);
+    };
+    
+    const handleSearchChange = (e) => {
+        setFilters(prev => ({ ...prev, aramaTerimi: e.target.value }));
+        setCurrentPage(1);
+    }
+    
     const openModal = (product) => { setSelectedProduct(product); setModalOpen(true); };
-    const closeModal = () => { setModalOpen(false); };
-
+    const closeModal = () => setModalOpen(false);
+    const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
     const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
-
+    
     return (
-        <div className="bg-gray-100">
-            <header className="bg-gray-900">
-                <div className="container mx-auto px-6 py-10 text-center text-white">
-                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-wider"><span className="text-yellow-400">ÜRÜN</span> KATALOĞU</h1>
-                    <p className="mt-3 text-lg text-gray-300">Aradığınız tüm endüstriyel lazer parçaları burada</p>
-                    <div className="mt-8 max-w-2xl mx-auto">
-                        <div className="relative flex items-center bg-white rounded-full shadow-xl">
-                            <input type="text" placeholder="Ürün veya parça kodu ara..." className="w-full py-4 pl-6 pr-12 text-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-400" value={aramaTerimi} onChange={(e) => setAramaTerimi(e.target.value)} />
-                            <div className="absolute right-0 pr-4"> <SearchIcon /> </div>
+        <div className="bg-gray-50 min-h-screen">
+            <main className="container mx-auto p-4 md:p-8">
+                <div className="mb-6"><Breadcrumb kategori={filters.seciliKategori} /></div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+                    {/* --- FİLTRE PANELİ (MASAÜSTÜ) --- */}
+                    <aside className="hidden lg:block lg:col-span-1">
+                        <div className="sticky top-28">
+                            <FiltrePaneli
+                                filters={filters}
+                                onKategoriChange={handleKategoriChange}
+                                onFilterChange={(type, value) => {
+                                    // Masaüstünde anında uygula
+                                    if (type === 'marka') {
+                                        setFilters(prev => ({
+                                            ...prev,
+                                            seciliMarkalar: prev.seciliMarkalar.includes(value)
+                                                ? prev.seciliMarkalar.filter(m => m !== value)
+                                                : [...prev.seciliMarkalar, value]
+                                        }));
+                                        setCurrentPage(1);
+                                    }
+                                }}
+                                onReset={resetAllFilters}
+                            />
                         </div>
-                    </div>
-                </div>
-            </header>
-            <main className="container mx-auto p-6 md:p-8">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <aside className="lg:col-span-1"><div className="bg-white p-6 rounded-xl shadow-md sticky top-24"><h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Kategoriler</h3><ul className="space-y-1">{kategoriler.map(kategori => ( <li key={kategori}> <button onClick={() => setSeciliKategori(kategori)} className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${seciliKategori === kategori ? 'bg-yellow-400 text-gray-900 shadow-sm' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'}`}> {kategori} </button> </li> ))}</ul><h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2 mt-6">Filtreler</h3><div className="flex items-center"><input type="checkbox" id="stok" className="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-400" checked={stoktakiler} onChange={(e) => setStoktakiler(e.target.checked)} /><label htmlFor="stok" className="ml-3 text-sm font-medium text-gray-700">Sadece Stoktakiler</label></div></div></aside>
-                    <section className="lg:col-span-3">
-                        <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm"><p className="text-sm text-gray-600 font-medium"><span className="font-bold text-gray-800">{filtrelenmisUrunler.length}</span> ürün bulundu</p><button className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900">Sırala <ChevronDownIcon/></button></div>
-                        {filtrelenmisUrunler.length > 0 ? (
-                            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                {filtrelenmisUrunler.map(urun => (
-                                    <ProductCard key={urun.id} product={urun} openModal={openModal} />
-                                ))}
+                    </aside>
+
+                    <section className="col-span-1 lg:col-span-3">
+                        {/* --- KONTROL BARI --- */}
+                        <div className="mb-6 space-y-4">
+                            <div>
+                                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">{filters.seciliKategori}</h1>
+                                <p className="text-sm text-gray-600 mt-1">
+                                    <span className="font-bold text-gray-800">{filtrelenmisUrunler.length}</span> ürün bulundu
+                                </p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <div className="relative flex-grow">
+                                    <input type="text" placeholder="Ürünlerde ara..." value={filters.aramaTerimi} onChange={handleSearchChange} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-yellow-400 focus:border-yellow-400" />
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><SearchIcon /></div>
+                                </div>
+                                <div className="flex items-center">
+                                    <button onClick={() => { setTempFilters(filters); setIsFilterOpen(true); }} className="lg:hidden flex items-center gap-2 text-sm font-bold bg-white p-2.5 rounded-lg border border-gray-300">
+                                        <FilterIcon /> <span className="hidden xs:inline">Filtrele</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* --- ÜRÜN LİSTESİ --- */}
+                        {isLoading ? (
+                            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+                                {[...Array(ITEMS_PER_PAGE)].map((_, i) => <SkeletonCard key={i} />)}
+                            </div>
+                        ) : (
+                            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+                                {currentUrunler.length > 0 ? (
+                                    currentUrunler.map(urun => (
+                                        <ProductCard key={urun.id} product={urun} openModal={openModal} />
+                                    ))
+                                ) : (
+                                    <div className="text-center py-20 bg-white rounded-xl col-span-full shadow-sm">
+                                        <h3 className="text-2xl font-bold text-gray-800">Aradığınız kriterlere uygun ürün bulunamadı.</h3>
+                                        <p className="mt-2 text-gray-500">Lütfen filtrelerinizi değiştirin veya sıfırlayın.</p>
+                                        <button onClick={resetAllFilters} className="mt-4 bg-yellow-400 text-gray-900 font-bold py-2 px-5 rounded-lg hover:bg-yellow-500 transition-colors">
+                                            Filtreleri Temizle
+                                        </button>
+                                    </div>
+                                )}
                             </motion.div>
-                        ) : ( <div className="text-center py-20 bg-white rounded-xl shadow-md col-span-full"><h3 className="text-2xl font-bold text-gray-800">Üzgünüz, aradığınız kriterlere uygun ürün bulunamadı.</h3><p className="mt-2 text-gray-500">Lütfen filtrelerinizi veya arama teriminizi değiştirin.</p></div> )}
-                        <Pagination />
+                        )}
+
+                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
                     </section>
                 </div>
             </main>
+
+            {/* --- MODAL'LAR --- */}
+            <AnimatePresence>{modalOpen && selectedProduct && (<ProductModal product={selectedProduct} onClose={closeModal} />)}</AnimatePresence>
+
+            {/* MOBİL FİLTRE MODALI */}
             <AnimatePresence>
-                {modalOpen && selectedProduct && (<ProductModal product={selectedProduct} onClose={closeModal} />)}
+                {isFilterOpen && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="lg:hidden fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm" onClick={() => setIsFilterOpen(false)}>
+                        <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} className="fixed bottom-0 left-0 h-[85vh] w-full bg-gray-100 shadow-2xl rounded-t-2xl flex flex-col" onClick={(e) => e.stopPropagation()}>
+                            <div className="p-4 border-b flex justify-between items-center">
+                                <h2 className="text-xl font-bold">Filtrele</h2>
+                                <button onClick={() => setIsFilterOpen(false)}><CloseIcon /></button>
+                            </div>
+                            <div className="overflow-y-auto flex-grow p-4">
+                                <FiltrePaneli filters={tempFilters} onFilterChange={handleFilterChange} onKategoriChange={handleKategoriChange} onReset={() => setTempFilters(initialFilters)} />
+                            </div>
+                            <div className="p-4 bg-white border-t">
+                                <button onClick={applyTempFilters} className="w-full bg-yellow-400 text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors">
+                                    Filtreleri Uygula
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* SCROLL-TO-TOP BUTONU */}
+            <AnimatePresence>
+                {showScrollTop && (
+                    <motion.button initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} onClick={scrollTop} className="fixed bottom-6 right-6 bg-gray-800 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-40 hover:bg-gray-900">
+                        <ArrowUpIcon />
+                    </motion.button>
+                )}
             </AnimatePresence>
         </div>
     );

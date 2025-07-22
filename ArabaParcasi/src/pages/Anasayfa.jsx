@@ -12,8 +12,8 @@ const CartIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor
 const AnimatedSection = ({ children, className }) => {
     const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true });
     const animation = useAnimation();
-    React.useEffect(() => { if(inView) { animation.start('visible'); } }, [inView, animation]);
-    return ( <motion.div ref={ref} initial="hidden" animate={animation} variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 20 }}} transition={{ duration: 0.6 }} className={className}>{children}</motion.div> );
+    React.useEffect(() => { if (inView) { animation.start('visible'); } }, [inView, animation]);
+    return (<motion.div ref={ref} initial="hidden" animate={animation} variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 20 } }} transition={{ duration: 0.6 }} className={className}>{children}</motion.div>);
 };
 
 const SectionHeader = ({ title, linkText, linkTo }) => (
@@ -25,40 +25,50 @@ const SectionHeader = ({ title, linkText, linkTo }) => (
 
 const ProductCarousel = ({ title, linkText, linkTo, products }) => {
     const { addToCart } = useCart();
-    const settings = { 
-        dots: true, 
-        infinite: false, 
-        speed: 500, 
-        slidesToShow: 4, 
-        slidesToScroll: 2, 
+    const settings = {
+        dots: true,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 4,
+        slidesToScroll: 2,
         arrows: false,
-        responsive: [ 
-            { breakpoint: 1280, settings: { slidesToShow: 3, slidesToScroll: 2 } }, 
+        responsive: [
+            { breakpoint: 1280, settings: { slidesToShow: 3, slidesToScroll: 2 } },
             { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 2 } },
             { breakpoint: 640, settings: { slidesToShow: 1.5, slidesToScroll: 1 } }
-        ] 
+        ]
     };
-    
+
     return (
         <AnimatedSection className="container mx-auto px-4 py-8 md:py-12">
             <SectionHeader title={title} linkText={linkText} linkTo={linkTo} />
             <Slider {...settings} className="-mx-2">
                 {products.map(product => (
                     <div key={product.id} className="px-2">
-                        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden group relative">
+                        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden group relative flex flex-col h-full">
                             <Link to="#">
                                 <img src={product.resim} alt={product.ad} className="w-full h-48 object-cover group-hover:opacity-80 transition-opacity duration-300" />
                             </Link>
-                            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-center">
-                                <button onClick={() => addToCart(product)} className="bg-white text-gray-900 font-bold py-2 px-4 rounded-full text-sm flex items-center transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 cursor-pointer"> 
-                                    <CartIcon /> <span className="ml-2">Sepete Ekle</span> 
+                            
+                            {/* MASAÜSTÜ İÇİN GİZLİ, HOVER'DA ÇIKAN BUTON */}
+                            <div className="hidden md:flex absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 justify-center">
+                                <button onClick={() => addToCart(product)} className="bg-white text-gray-900 font-bold py-2 px-4 rounded-full text-sm flex items-center transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 cursor-pointer">
+                                    <CartIcon /> <span className="ml-2">Sepete Ekle</span>
                                 </button>
                             </div>
-                            <div className="p-4">
+
+                            <div className="p-4 flex flex-col flex-grow">
                                 <h3 className="text-sm font-semibold text-gray-800 truncate h-10">{product.ad}</h3>
-                                <div className="mt-2">
+                                <div className="mt-2 flex-grow">
                                     <span className="text-lg font-bold text-amber-600">{product.fiyat}</span>
                                     {product.eskiFiyat && <span className="text-sm text-gray-500 line-through ml-2">{product.eskiFiyat}</span>}
+                                </div>
+
+                                {/* MOBİL İÇİN HER ZAMAN GÖRÜNÜR BUTON */}
+                                <div className="mt-4 md:hidden">
+                                    <button onClick={() => addToCart(product)} className="w-full bg-gray-800 text-white font-bold py-2 px-4 rounded-lg text-sm flex items-center justify-center">
+                                        <CartIcon /> <span className="ml-2">Sepete Ekle</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -71,7 +81,7 @@ const ProductCarousel = ({ title, linkText, linkTo, products }) => {
 
 // --- ANA SAYFA BİLEŞENİ ---
 function Anasayfa() {
-    const mainSliderSettings = { dots: true, infinite: true, speed: 800, slidesToShow: 1, slidesToScroll: 1, autoplay: true, autoplaySpeed: 6000, fade: true, cssEase: 'cubic-bezier(0.7, 0, 0.3, 1)', arrows: false, appendDots: dots => ( <div style={{ bottom: '30px' }}><ul style={{ margin: "0px" }}>{dots}</ul></div> ) };
+    const mainSliderSettings = { dots: true, infinite: true, speed: 800, slidesToShow: 1, slidesToScroll: 1, autoplay: true, autoplaySpeed: 6000, fade: true, cssEase: 'cubic-bezier(0.7, 0, 0.3, 1)', arrows: false, appendDots: dots => (<div style={{ bottom: '30px' }}><ul style={{ margin: "0px" }}>{dots}</ul></div>) };
 
     return (
         <div className="bg-gray-50">
@@ -112,14 +122,26 @@ function Anasayfa() {
                 </section>
             </AnimatedSection>
             
-            {/* 3. PROMOSYON BANNERLARI */}
-            <AnimatedSection>
-                <section className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                    {promoBannerlar.map((banner, index) => (
-                        <Link to={banner.link} key={index} className="block overflow-hidden rounded-lg shadow-md">
-                            <img src={banner.resim} alt={`Promo ${index + 1}`} className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110" />
-                        </Link>
-                    ))}
+            {/* 3. PROMOSYON KARTLARI */}
+             <AnimatedSection>
+                <section className="container mx-auto px-4 py-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {promoBannerlar.map((banner, index) => (
+                            <Link to={banner.link} key={index} className="relative block rounded-xl overflow-hidden group shadow-lg">
+                                <img src={banner.resim} alt={banner.baslik} className="w-full h-64 object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
+                                <div className="absolute bottom-0 left-0 p-6 text-white">
+                                    <span className="text-sm font-bold uppercase tracking-wider text-yellow-300">{banner.kategori}</span>
+                                    <h3 className="text-2xl font-extrabold mt-1">{banner.baslik}</h3>
+                                    <div className="mt-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                        <div className="inline-block bg-yellow-400 text-gray-900 font-bold py-2 px-5 rounded-full">
+                                            {banner.buttonText} →
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
                 </section>
             </AnimatedSection>
 
@@ -145,7 +167,6 @@ function Anasayfa() {
 
             <ProductCarousel title="Flaş İndirimler ⚡" linkText="Tüm Fırsatlar" linkTo="/urunler" products={flasIndirimler} />
 
-  
 
             {/* 7. BLOG'DAN SON YAZILAR */}
             <AnimatedSection>
@@ -166,9 +187,23 @@ function Anasayfa() {
                     </div>
                 </section>
             </AnimatedSection>
+
+             {/* 8. BÜLTEN KAYDI */}
+            <AnimatedSection>
+                <section className="bg-yellow-400">
+                    <div className="container mx-auto px-6 py-12 text-center text-gray-900">
+                        <h2 className="text-3xl font-bold">İndirim ve Fırsatlardan İlk Siz Haberdar Olun!</h2>
+                        <p className="mt-2 max-w-2xl mx-auto">Bültenimize kaydolun, yeni ürünleri ve özel kampanyaları kaçırmayın.</p>
+                        <form className="mt-6 max-w-lg mx-auto flex">
+                            <input type="email" placeholder="E-posta adresiniz..." className="w-full px-5 py-3 text-gray-800 rounded-l-full focus:outline-none focus:ring-2 focus:ring-gray-900"/>
+                            <button type="submit" className="bg-gray-900 text-white font-bold px-8 py-3 rounded-r-full hover:bg-gray-800">Abone Ol</button>
+                        </form>
+                    </div>
+                </section>
+            </AnimatedSection>
             
-            {/* 8. MARKALAR */}
-            <AnimatedSection className="py-12">
+            {/* 9. MARKALAR */}
+            <AnimatedSection className="py-12 bg-white">
                 <section className="container mx-auto px-4">
                     <h3 className="text-center text-gray-500 text-sm font-bold uppercase tracking-widest mb-8">Çalıştığımız Markalar</h3>
                     <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6">
