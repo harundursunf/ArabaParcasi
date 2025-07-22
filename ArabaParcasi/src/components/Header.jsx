@@ -9,7 +9,6 @@ import { markalar } from '../data/homePageData';
 const CartIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>;
 const SearchIcon = () => <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>;
 const ChevronDownIcon = () => <svg className="w-4 h-4 ml-1 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>;
-const UserIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>;
 const MenuIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"></path></svg>;
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
@@ -43,24 +42,35 @@ function Header() {
         <div className="sticky top-0 z-50 bg-white shadow-sm">
             <div className="container mx-auto px-6">
                 <div className="flex items-center justify-between h-20">
-                    <div className="text-2xl font-black uppercase"><Link to="/">Lazer<span className="text-yellow-400">Parça</span></Link></div>
+                    <div className="text-2xl font-black uppercase">
+                        <Link to="/">Lazer<span className="text-yellow-400">Parça</span></Link>
+                    </div>
                     <div className="hidden lg:block w-full max-w-xl">
                         <form onSubmit={handleSearchSubmit} className="relative">
-                            <input 
-                                type="text" 
-                                placeholder="Ürün, marka veya kategori ara..." 
-                                className="w-full bg-gray-100 border border-gray-200 rounded-full py-2.5 pl-5 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                                value={aramaMetni}
-                                onChange={(e) => setAramaMetni(e.target.value)}
-                            />
-                            <button type="submit" className="absolute inset-y-0 right-0 flex items-center pr-4">
-                                <SearchIcon />
-                            </button>
+                            <input type="text" placeholder="Ürün, marka veya kategori ara..." className="w-full bg-gray-100 border border-gray-200 rounded-full py-2.5 pl-5 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" value={aramaMetni} onChange={(e) => setAramaMetni(e.target.value)} />
+                            <button type="submit" className="absolute inset-y-0 right-0 flex items-center pr-4"><SearchIcon /></button>
                         </form>
                     </div>
-                    <div className="flex items-center space-x-6">
-                        <Link to="#" className="hidden md:flex items-center text-sm font-semibold text-gray-600 hover:text-yellow-500 transition-colors"><UserIcon/> <span className="ml-2">Giriş Yap</span></Link>
-                        <Link to="/sepetim" className="relative flex items-center text-sm font-semibold text-gray-600 hover:text-yellow-500 transition-colors"><CartIcon /> <span className="ml-2">Sepetim</span>{totalItems > 0 && ( <span className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">{totalItems}</span> )}</Link>
+                    <div className="flex items-center space-x-4">
+                        {/* GİRİŞ YAP BUTONU KALDIRILDI */}
+                        <Link to="/sepetim" className="relative flex items-center p-2 text-gray-600 hover:text-yellow-500 transition-colors">
+                            <CartIcon />
+                            {/* YENİ ANİMASYONLU SEPET SAYACI */}
+                            <AnimatePresence>
+                                {totalItems > 0 && (
+                                    <motion.span 
+                                        key={totalItems}
+                                        initial={{ scale: 0.5, y: -10, opacity: 0 }}
+                                        animate={{ scale: 1, y: 0, opacity: 1 }}
+                                        exit={{ scale: 0.5, opacity: 0 }}
+                                        transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                                        className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full"
+                                    >
+                                        {totalItems}
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
+                        </Link>
                         <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 -mr-2"><MenuIcon /></button>
                     </div>
                 </div>
