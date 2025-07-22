@@ -5,21 +5,21 @@ export const sliderData = [
         subtitle: 'Endüstriyel lazer makineniz için en kaliteli parçalarla üretiminizi bir üst seviyeye taşıyın.',
         buttonText: 'Şimdi Keşfet',
         buttonLink: '/urunler',
-        image: 'https://images.unsplash.com/photo-1617802329292-3418534e3556'
+        image: '/silder1.png' // <-- DEĞİŞTİRİLDİ
     },
     {
         title: 'TÜM YEDEK PARÇALAR TEK ADRESTE',
         subtitle: 'Geniş stok ağımız ile aradığınız tüm nozzle, lens ve seramik çeşitleri anında kargoda.',
         buttonText: 'Ürünleri İncele',
         buttonLink: '/urunler',
-        image: 'https://images.unsplash.com/photo-1605566352358-c40b593a54a2'
+        image: '/slider6.png' // <-- DEĞİŞTİRİLDİ
     },
     {
         title: '7/24 TEKNİK DESTEK',
         subtitle: 'Sadece parça satmıyoruz, aynı zamanda tecrübemizle her an yanınızdayız.',
         buttonText: 'Bize Ulaşın',
         buttonLink: '/iletisim',
-        image: 'https://images.unsplash.com/photo-1554474052-32a321941624'
+        image: '/slider3.png' // <-- DEĞİŞTİRİLDİ
     }
 ];
 

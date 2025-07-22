@@ -91,10 +91,10 @@ function Anasayfa() {
                     {sliderData.map(slide => (
                          <div key={slide.title} className="relative h-[50vh] md:h-[65vh] min-h-[400px]">
                             <div className="absolute inset-0 bg-cover bg-center ken-burns-bg" style={{ backgroundImage: `url('${slide.image}')` }}></div>
-                            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+                            <div className="absolute inset-0 bg-opacity-50"></div>
                             <div className="relative h-full flex flex-col justify-center items-center text-center text-white p-4 z-10">
-                                <motion.h1 initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.2}} className="text-3xl md:text-6xl font-black uppercase tracking-wider">{slide.title}</motion.h1>
-                                <motion.p initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.4}} className="mt-4 max-w-2xl text-base md:text-lg text-gray-200">{slide.subtitle}</motion.p>
+                                <motion.h1 initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.2}} className="text-3xl md:text-6xl rounded-3xl bg-red-800 font-black uppercase tracking-wider">{slide.title}</motion.h1>
+                                <motion.p initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.4}} className="mt-4 max-w-2xl text-base md:text-lg  text-gray-200">{slide.subtitle}</motion.p>
                                 <motion.div initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.6}}>
                                     <Link to={slide.buttonLink} className="mt-8 inline-block bg-yellow-400 text-gray-900 font-bold py-3 px-10 rounded-full text-lg uppercase transition-transform transform hover:scale-105 hover:shadow-lg">{slide.buttonText}</Link>
                                 </motion.div>
