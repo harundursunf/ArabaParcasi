@@ -9,7 +9,10 @@ import { markalar } from '../data/homePageData';
 const CartIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>;
 const SearchIcon = () => <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>;
 const ChevronDownIcon = () => <svg className="w-4 h-4 ml-1 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>;
+
+// HATA BURADAYDI: strokeWidth={2"} yerine strokeWidth={2} olarak düzeltildi.
 const MenuIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"></path></svg>;
+
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
 function Header() {
@@ -36,16 +39,19 @@ function Header() {
         if (aramaMetni.trim()) {
             navigate(`/urunler?q=${aramaMetni}`);
             setAramaMetni('');
+            setIsMobileMenuOpen(false);
         }
     };
 
     return (
         <div className="sticky top-0 z-50 bg-white shadow-sm">
-            <div className="container mx-auto px-6">
+            <div className="container mx-auto px-4 sm:px-6">
                 <div className="flex items-center justify-between h-20">
-                    <div className="text-2xl font-black uppercase">
-                        {/* DEĞİŞİKLİK BURADA: Yazı yerine resim logosu eklendi */}
-                        <Link to="/"><img src="/TechnoLogo.png" alt="LazerParça Logo" className="h-10 w-auto" /></Link>
+                    <div className="lg:hidden">
+                        <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 -ml-2"><MenuIcon /></button>
+                    </div>
+                    <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:left-auto lg:translate-x-0">
+                        <Link to="/"><img src="/TechnoLogo.png" alt="LazerParça Logo" className="h-12 w-auto" /></Link>
                     </div>
                     <div className="hidden lg:block w-full max-w-xl">
                         <form onSubmit={handleSearchSubmit} className="relative">
@@ -53,7 +59,7 @@ function Header() {
                             <button type="submit" className="absolute inset-y-0 right-0 flex items-center pr-4"><SearchIcon /></button>
                         </form>
                     </div>
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
                         <Link to="/sepetim" className="relative flex items-center p-2 text-gray-600 hover:text-yellow-500 transition-colors">
                             <CartIcon />
                             <AnimatePresence>
@@ -64,7 +70,6 @@ function Header() {
                                 )}
                             </AnimatePresence>
                         </Link>
-                        <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 -mr-2"><MenuIcon /></button>
                     </div>
                 </div>
             </div>
@@ -76,17 +81,7 @@ function Header() {
                             Ürünler <ChevronDownIcon className={`transition-transform duration-300 ${isProductsMenuOpen ? 'rotate-180' : ''}`} />
                         </NavLink>
                         <AnimatePresence>
-                            {isProductsMenuOpen && (
-                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.2 }} className="absolute top-full left-1/2 -translate-x-1/2 w-screen max-w-4xl bg-white shadow-lg rounded-b-lg border-t border-gray-100">
-                                    <div className="grid grid-cols-4 gap-8 py-8 px-6">
-                                        <div className="col-span-3 grid grid-cols-3 gap-8">
-                                            <div><h3 className="font-bold text-gray-500 uppercase text-xs tracking-wider mb-4">Kategoriler</h3><div className="space-y-3">{kategoriler.slice(1).map(kategori => ( <Link key={kategori} to="/urunler" onClick={() => setIsProductsMenuOpen(false)} className="block text-gray-600 hover:text-yellow-500 whitespace-nowrap">{kategori}</Link>))}</div></div>
-                                            <div><h3 className="font-bold text-gray-500 uppercase text-xs tracking-wider mb-4">Markalar</h3><div className="space-y-3">{markalar.slice(0, 5).map(marka => ( <Link key={marka} to="/urunler" onClick={() => setIsProductsMenuOpen(false)} className="block text-gray-600 hover:text-yellow-500">{marka}</Link>))}</div></div>
-                                        </div>
-                                        <div className="col-span-1"><div className="bg-gray-100 rounded-lg h-full w-full overflow-hidden"><img src="/x1.avif" alt="promosyon" className="w-full h-full object-cover"/></div></div>
-                                    </div>
-                                </motion.div>
-                            )}
+                            {isProductsMenuOpen && ( <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.2 }} className="absolute top-full left-1/2 -translate-x-1/2 w-screen max-w-4xl bg-white shadow-lg rounded-b-lg border-t border-gray-100"> <div className="grid grid-cols-4 gap-8 py-8 px-6"> <div className="col-span-3 grid grid-cols-3 gap-8"> <div><h3 className="font-bold text-gray-500 uppercase text-xs tracking-wider mb-4">Kategoriler</h3><div className="space-y-3">{kategoriler.slice(1).map(kategori => ( <Link key={kategori} to="/urunler" onClick={() => setIsProductsMenuOpen(false)} className="block text-gray-600 hover:text-yellow-500 whitespace-nowrap">{kategori}</Link>))}</div></div> <div><h3 className="font-bold text-gray-500 uppercase text-xs tracking-wider mb-4">Markalar</h3><div className="space-y-3">{markalar.slice(0, 5).map(marka => ( <Link key={marka} to="/urunler" onClick={() => setIsProductsMenuOpen(false)} className="block text-gray-600 hover:text-yellow-500">{marka}</Link>))}</div></div> </div> <div className="col-span-1"><div className="bg-gray-100 rounded-lg h-full w-full overflow-hidden"><img src="/x1.avif" alt="promosyon" className="w-full h-full object-cover"/></div></div> </div> </motion.div>)}
                         </AnimatePresence>
                     </div>
                     <NavLink to="/blog" className={navLinkStyle}><div className="group h-full flex items-center">Blog</div></NavLink>
@@ -97,9 +92,15 @@ function Header() {
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="lg:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm">
-                        <motion.div initial={{x: '100%'}} animate={{x: 0}} exit={{x: '100%'}} transition={{type: 'spring', stiffness: 300, damping: 30}} className="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white shadow-2xl">
+                        <motion.div initial={{x: '-100%'}} animate={{x: 0}} exit={{x: '-100%'}} transition={{type: 'spring', stiffness: 300, damping: 30}} className="fixed top-0 left-0 h-full w-4/5 max-w-sm bg-white shadow-2xl">
                             <div className="p-6 flex flex-col h-full">
-                                <div className="flex justify-between items-center mb-8"><h3 className="font-bold text-lg">Menü</h3><button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2"><CloseIcon /></button></div>
+                                <div className="flex justify-end items-center mb-8"><button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2"><CloseIcon /></button></div>
+                                <div className="mb-8">
+                                    <form onSubmit={handleSearchSubmit} className="relative">
+                                        <input type="text" placeholder="Arama yap..." className="w-full bg-gray-100 border border-gray-200 rounded-full py-2.5 pl-5 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" value={aramaMetni} onChange={(e) => setAramaMetni(e.target.value)} />
+                                        <button type="submit" className="absolute inset-y-0 right-0 flex items-center pr-4"><SearchIcon /></button>
+                                    </form>
+                                </div>
                                 <nav className="flex flex-col space-y-5 text-lg font-semibold text-gray-700">
                                     <NavLink to="/">Anasayfa</NavLink>
                                     <NavLink to="/urunler">Ürünler</NavLink>
