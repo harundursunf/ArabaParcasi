@@ -1,20 +1,17 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-// --- Context'ler ---
-// Bu context'ler, uygulama genelinde veri yönetimi sağlar.
+// Context'ler
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
-// --- Bileşenler ve Sayfalar ---
-// Ana layout bileşenleri
+// Ana Bileşenler
 import Header from './components/Header';
 import Footer from './components/Footer';
-// Rota koruma bileşeni
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Sayfalar
+// Site Sayfaları
 import Anasayfa from './pages/Anasayfa';
 import Urunler from './pages/Urunler';
 import Sepetim from './pages/Sepetim';
@@ -23,61 +20,62 @@ import İletisim from './pages/İletisim';
 import Blog from './pages/Blog';
 import BlogIcerik from './pages/BlogIcerik';
 import Profile from './pages/Profile';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './pages/login/Login';
+import Register from './pages/login/Register';
+
+// Admin Sayfaları
+import AdminLayout from './admin/AdminLayout';
+import General from './admin/general';
+import AdminUrunler from './admin/AdminUrunler';
+import AdminBlog from './admin/AdminBlog';
+
+import AdminLogin from './admin/AdminLogin'; // Yeni giriş sayfasını import et
+import ProtectedAdminRoute from './admin/ProtectedAdminRoute'; // Korumayı import et
+
+const SiteLayout = () => (
+  <div className="bg-white min-h-screen flex flex-col font-sans">
+    <Header />
+    <main className="flex-grow"><Outlet /></main>
+    <Footer />
+  </div>
+);
 
 function App() {
   return (
-    // AuthProvider, kullanıcı oturum bilgilerini tüm uygulamaya sağlar.
     <AuthProvider>
-      {/* CartProvider, sepet bilgilerini tüm uygulamaya sağlar. */}
       <CartProvider>
-        {/* Bildirimlerin (toast) gösterileceği alan */}
-        <Toaster
-          position="top-center" 
-          toastOptions={{
-            success: {
-              duration: 3000,
-              iconTheme: {
-                primary: '#10B981',
-                secondary: '#FFFFFF',
-              },
-            },
-            error: {
-              duration: 4000,
-            }
-          }}
-        />
+        <Toaster position="top-center" />
+        <Routes>
+          {/* --- ADMIN PANELİ ROTALARI --- */}
+          {/* Giriş sayfası korumasız olacak */}
+          <Route path="/admin/login" element={<AdminLogin />} />
 
-        <div className="bg-white min-h-screen flex flex-col font-sans">
-          <Header />
+          {/* Diğer tüm admin sayfaları korumalı olacak */}
+          <Route element={<ProtectedAdminRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<General />} />
+              <Route path="AdminUrunler" element={<AdminUrunler />} />
+              <Route path="AdminBlog" element={<AdminBlog />} />
+  
+            </Route>
+          </Route>
 
-          <main className="flex-grow">
-            <Routes>
-              {/* --- Herkesin Erişebileceği Rotalar --- */}
-              <Route path="/" element={<Anasayfa />} />
-              <Route path="/urunler" element={<Urunler />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:blogSlug" element={<BlogIcerik />} />
-              <Route path="/hakkimizda" element={<Hakkimizda />} />
-              <Route path="/iletisim" element={<İletisim />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              
-              {/* --- Sadece Giriş Yapmış Kullanıcıların Erişebileceği Korumalı Rotalar --- */}
-              {/* ProtectedRoute, içindeki rotalara erişimden önce kullanıcı girişi kontrolü yapar. */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/sepetim" element={<Sepetim />} />
-              </Route>
-              
-              {/* TODO: 404 Not Found sayfası için bir rota eklenebilir */}
-              {/* <Route path="*" element={<NotFoundPage />} /> */}
-            </Routes>
-          </main>
-
-          <Footer />
-        </div>
+          {/* --- GENEL SİTE ROTALARI --- */}
+          <Route path="/" element={<SiteLayout />}>
+            <Route index element={<Anasayfa />} />
+            <Route path="urunler" element={<Urunler />} />
+            <Route path="blog" element={<Blog />} />
+            <Route path="blog/:blogSlug" element={<BlogIcerik />} />
+            <Route path="hakkimizda" element={<Hakkimizda />} />
+            <Route path="iletisim" element={<İletisim />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="profile" element={<Profile />} />
+              <Route path="sepetim" element={<Sepetim />} />
+            </Route>
+          </Route>
+        </Routes>
       </CartProvider>
     </AuthProvider>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Auth context'i kullanacağız
+import { useAuth } from '../../context/AuthContext'; // Auth context'i kullanacağız
 import { toast } from 'react-hot-toast';
 
 function Login() {
@@ -16,18 +16,18 @@ function Login() {
       toast.error('Lütfen tüm alanları doldurun.');
       return;
     }
-    
+
     // --- GİRİŞ KONTROL MANTIĞI (Sadece Test Amaçlı) ---
     // Kullanıcı adı ve şifreyi burada kontrol ediyoruz.
     if (email === 'harun@gmail.com' && password === 'dursun') {
       // Bilgiler doğruysa...
 
       // Sahte bir kullanıcı verisi oluşturup Context'e gönderiyoruz.
-      const fakeUserData = { 
-          id: 1, 
-          name: 'Harun Dursun', // İsim ve soyadı da belirleyelim
-          email: email, 
-          role: 'Customer' 
+      const fakeUserData = {
+        id: 1,
+        name: 'Harun Dursun', // İsim ve soyadı da belirleyelim
+        email: email,
+        role: 'Customer'
       };
       login(fakeUserData);
 
@@ -53,15 +53,15 @@ function Login() {
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">E-posta Adresi</label>
             <div className="mt-1">
-              <input 
-                id="email" 
-                name="email" 
-                type="email" 
-                autoComplete="email" 
-                required 
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400" 
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 placeholder="harun@example.com"
               />
             </div>
@@ -70,15 +70,15 @@ function Login() {
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Şifre</label>
             <div className="mt-1">
-              <input 
-                id="password" 
-                name="password" 
-                type="password" 
-                autoComplete="current-password" 
-                required 
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400" 
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 placeholder="dursun"
               />
             </div>
