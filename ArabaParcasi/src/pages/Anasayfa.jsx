@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import { motion, useAnimation } from 'framer-motion';
@@ -46,7 +46,8 @@ const ProductCarousel = ({ title, linkText, linkTo, products }) => {
                 {products.map(product => (
                     <div key={product.id} className="px-2">
                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden group relative flex flex-col h-full">
-                            <Link to="#">
+                            {/* HATA DÜZELTME: Link ürünün detay sayfasına yönlendirildi */}
+                            <Link to={`/urunler/${product.id}`}>
                                 <img src={product.resim} alt={product.ad} className="w-full h-48 object-cover group-hover:opacity-80 transition-opacity duration-300" />
                             </Link>
                             
@@ -85,24 +86,24 @@ function Anasayfa() {
 
     return (
         <div className="bg-gray-50">
-     {/* 10. SEÇENEK: BÜYÜK TİPOGRAFİ */}
-<section className="relative h-[50vh] md:h-[65vh] min-h-[400px] w-full overflow-hidden">
-    <Slider {...mainSliderSettings}>
-        {sliderData.map(slide => (
-            <div key={slide.title} className="relative h-[50vh] md:h-[65vh] min-h-[400px]">
-                <div className="absolute inset-0 bg-cover bg-center ken-burns-bg" style={{ backgroundImage: `url('${slide.image}')` }}></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-                <div className="relative h-full w-full flex flex-col justify-center items-center text-center text-white p-4 z-10">
-                    <motion.h1 initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.2}} className="text-5xl md:text-8xl font-black uppercase tracking-tighter" style={{textShadow: '3px 3px 10px rgba(0,0,0,0.5)'}}>{slide.title}</motion.h1>
-                    <motion.p initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.4}} className="mt-4 max-w-2xl text-lg md:text-xl text-gray-200 font-light">{slide.subtitle}</motion.p>
-                    <motion.div initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.6}} className="mt-8">
-                        <Link to={slide.buttonLink} className="inline-block bg-yellow-400 text-gray-900 font-bold py-3 px-10 rounded-full text-lg uppercase transition-all duration-300 transform hover:scale-105 hover:shadow-xl">{slide.buttonText}</Link>
-                    </motion.div>
-                </div>
-            </div>
-        ))}
-    </Slider>
-</section>
+            {/* 1. ANA SLIDER */}
+            <section className="relative h-[50vh] md:h-[65vh] min-h-[400px] w-full overflow-hidden">
+                <Slider {...mainSliderSettings}>
+                    {sliderData.map(slide => (
+                        <div key={slide.title} className="relative h-[50vh] md:h-[65vh] min-h-[400px]">
+                            <div className="absolute inset-0 bg-cover bg-center ken-burns-bg" style={{ backgroundImage: `url('${slide.image}')` }}></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                            <div className="relative h-full w-full flex flex-col justify-center items-center text-center text-white p-4 z-10">
+                                <motion.h1 initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.2}} className="text-5xl md:text-8xl font-black uppercase tracking-tighter" style={{textShadow: '3px 3px 10px rgba(0,0,0,0.5)'}}>{slide.title}</motion.h1>
+                                <motion.p initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.4}} className="mt-4 max-w-2xl text-lg md:text-xl text-gray-200 font-light">{slide.subtitle}</motion.p>
+                                <motion.div initial={{y:20, opacity:0}} animate={{y:0, opacity:1}} transition={{duration:0.8, delay:0.6}} className="mt-8">
+                                    <Link to={slide.buttonLink} className="inline-block bg-yellow-400 text-gray-900 font-bold py-3 px-10 rounded-full text-lg uppercase transition-all duration-300 transform hover:scale-105 hover:shadow-xl">{slide.buttonText}</Link>
+                                </motion.div>
+                            </div>
+                        </div>
+                    ))}
+                </Slider>
+            </section>
             
             {/* 2. HIZLI ERİŞİM MENÜSÜ */}
             <AnimatedSection>
@@ -159,14 +160,14 @@ function Anasayfa() {
                             <span className="text-yellow-400 text-sm font-bold uppercase">Yeni Nesil Teknoloji</span>
                             <h2 className="text-3xl md:text-4xl font-bold mt-2">Otomatik Odaklı Kesim Kafası</h2>
                             <p className="text-gray-300 mt-4 text-base md:text-lg">Hassasiyet ve hızı bir araya getiren WSX® NC30 ile üretim verimliliğinizi zirveye taşıyın.</p>
-                            <Link to="#" className="mt-8 inline-block bg-white text-gray-900 font-bold py-3 px-8 rounded-full text-base uppercase transition-transform transform hover:scale-105">Ürünü İncele</Link>
+                            {/* HATA DÜZELTME: Link ürünün detay sayfasına yönlendirildi (Örnek ID: 1) */}
+                            <Link to="/urunler/1" className="mt-8 inline-block bg-white text-gray-900 font-bold py-3 px-8 rounded-full text-base uppercase transition-transform transform hover:scale-105">Ürünü İncele</Link>
                         </div>
                     </div>
                 </section>
             </AnimatedSection>
 
             <ProductCarousel title="Flaş İndirimler ⚡" linkText="Tüm Fırsatlar" linkTo="/urunler" products={flasIndirimler} />
-
 
             {/* 7. BLOG'DAN SON YAZILAR */}
             <AnimatedSection>
