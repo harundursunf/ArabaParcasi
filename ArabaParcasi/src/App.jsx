@@ -22,16 +22,17 @@ import BlogIcerik from './pages/BlogIcerik';
 import Profile from './pages/Profile';
 import Login from './pages/login/Login';
 import Register from './pages/login/Register';
+import UrunDetay from './pages/Detail';
 
 // Admin Sayfaları
 import AdminLayout from './admin/AdminLayout';
 import General from './admin/general';
 import AdminUrunler from './admin/AdminUrunler';
 import AdminBlog from './admin/AdminBlog';
+import AdminLogin from './admin/AdminLogin';
+import ProtectedAdminRoute from './admin/ProtectedAdminRoute';
 
-import AdminLogin from './admin/AdminLogin'; // Yeni giriş sayfasını import et
-import ProtectedAdminRoute from './admin/ProtectedAdminRoute'; // Korumayı import et
-
+// Bu bileşen, Header ve Footer'ı tüm site sayfaları için ortak bir düzende tutar.
 const SiteLayout = () => (
   <div className="bg-white min-h-screen flex flex-col font-sans">
     <Header />
@@ -47,23 +48,25 @@ function App() {
         <Toaster position="top-center" />
         <Routes>
           {/* --- ADMIN PANELİ ROTALARI --- */}
-          {/* Giriş sayfası korumasız olacak */}
           <Route path="/admin/login" element={<AdminLogin />} />
-
-          {/* Diğer tüm admin sayfaları korumalı olacak */}
           <Route element={<ProtectedAdminRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<General />} />
               <Route path="AdminUrunler" element={<AdminUrunler />} />
               <Route path="AdminBlog" element={<AdminBlog />} />
-  
             </Route>
           </Route>
 
           {/* --- GENEL SİTE ROTALARI --- */}
+          {/* Tüm site sayfaları SiteLayout'un içinde render edilecek */}
           <Route path="/" element={<SiteLayout />}>
             <Route index element={<Anasayfa />} />
             <Route path="urunler" element={<Urunler />} />
+
+            {/* HATA BURADAYDI ve DÜZELTİLDİ */}
+            {/* Ürün detay rotası, ürünler listeleme rotasıyla aynı seviyede olmalı. */}
+            <Route path="urunler/:id" element={<UrunDetay />} />
+
             <Route path="blog" element={<Blog />} />
             <Route path="blog/:blogSlug" element={<BlogIcerik />} />
             <Route path="hakkimizda" element={<Hakkimizda />} />
